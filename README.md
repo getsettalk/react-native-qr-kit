@@ -39,6 +39,20 @@ yarn add react-native-qr-kit
 
 ### Android Manual Linking (if needed) 
 If autolinking does not work, add the package manually in your `MainApplication.java`/`kt`:
+
+```js
+import com.qrkit.QRKitPackage; // <-- add this import
+
+@Override
+protected List<ReactPackage> getPackages() {
+  return Arrays.<ReactPackage>asList(
+    // ...other packages
+    new QRKitPackage() // <-- add this line
+  );
+}
+```
+
+
 ```js
 import QRKit from 'react-native-qr-kit';
 
@@ -65,25 +79,7 @@ const result4 = await QRKit.generateQRCode('https://example.com', 300);
 
 ---
 
-> **⚠️  Note: If you use an image picker or any method that returns a URI starting with 'file://', you must remove the 'file://' prefix before passing the path to QRKit's native methods.**  🚨
 
-```js
-import QRKit from 'react-native-qr-kit';
-
-// Decode a QR code from an image file path
-const result = await QRKit.decodeQR('/storage/emulated/0/Download/qr.png');
-
-// Decode a QR code from a base64 image string
-const result = await QRKit.decodeBase64(base64String);
-
-// Decode multiple QR codes from an image
-const result = await QRKit.decodeMultiple('/storage/emulated/0/Download/multi-qr.png');
-
-// Generate a QR code as a base64 PNG
-const result = await QRKit.generateQRCode('https://example.com', 300);
-```
-
----
 
 ## 📋 API Reference
 
