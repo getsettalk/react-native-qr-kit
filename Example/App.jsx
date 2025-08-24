@@ -1,137 +1,227 @@
 
+
 import React, { useState } from 'react';
-import { View, Text, Alert, StyleSheet, Image, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput, Image, ScrollView, Alert } from 'react-native';
+import Clipboard from '@react-native-clipboard/clipboard';
 import { launchImageLibrary } from 'react-native-image-picker';
 import QRKit from 'react-native-qr-kit';
 
 
-const QRCodeDecode = () => {
-  const [imagePath, setImagePath] = useState(null);
-  const [resultLog, setResultLog] = useState([]);
+const MethodModal = ({ visible, onClose, onSubmit, title, inputLabel, inputType = 'text', placeholder }) => {
+  const [input, setInput] = useState('');
+  return (
+    <Modal visible={visible} transparent animationType="slide">
+      <View style={modalStyles.overlay}>
+        <View style={modalStyles.modalBox}>
+          <Text style={modalStyles.title}>{title}</Text>
+          {inputLabel && <Text style={modalStyles.label}>{inputLabel}</Text>}
+          {inputType === 'multiline' ? (
+            <ScrollView style={modalStyles.inputScroll} contentContainerStyle={{ flexGrow: 1 }}>
+              <TextInput
+                style={[modalStyles.input, modalStyles.inputMultiline]}
+                value={input}
+                onChangeText={setInput}
+                placeholder={placeholder}
+                autoCapitalize="none"
+                autoCorrect={false}
+                multiline
+                textAlignVertical="top"
+              />
+            </ScrollView>
+          ) : (
+            <TextInput
+              style={modalStyles.input}
+              value={input}
+              onChangeText={setInput}
+              placeholder={placeholder}
+              keyboardType={inputType === 'number' ? 'numeric' : 'default'}
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
+          )}
+          <View style={modalStyles.row}>
+            <TouchableOpacity style={modalStyles.button} onPress={onClose}><Text style={modalStyles.buttonText}>Cancel</Text></TouchableOpacity>
+            <TouchableOpacity style={modalStyles.button} onPress={() => { onSubmit(input); setInput(''); }}><Text style={modalStyles.buttonText}>Submit</Text></TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    </Modal>
+  );
+};
 
-  const clearLogs = () => setResultLog([]);
+const App = () => {
+  const [modal, setModal] = useState(null); // 'base64' | 'generate' | null
+  const [result, setResult] = useState(null);
+  const [imageUri, setImageUri] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [copyMsg, setCopyMsg] = useState('');
+  const handleCopyBase64 = () => {
+    if (result && result.base64) {
+      Clipboard.setString(result.base64);
+      setCopyMsg('Copied!');
+      setTimeout(() => setCopyMsg(''), 1200);
+    }
+  };
 
-  const pickImage = async () => {
-    launchImageLibrary(
-      {
-        mediaType: 'photo',
-        selectionLimit: 1,
-      },
-      async (response) => {
-        if (response.didCancel) {
-          return;
-        }
-        if (response.errorCode) {
-          Alert.alert('Error', response.errorMessage || 'Image picker error');
-          return;
-        }
-        const asset = response.assets && response.assets[0];
-        if (asset && asset.uri) {
+  const handleDecodeQR = async () => {
+    launchImageLibrary({ mediaType: 'photo', selectionLimit: 1 }, async (response) => {
+      if (response.didCancel) return;
+      if (response.errorCode) {
+        Alert.alert('Error', response.errorMessage || 'Image picker error');
+        return;
+      }
+      const asset = response.assets && response.assets[0];
+      if (asset && asset.uri) {
+        setImageUri(asset.uri);
+        setLoading(true);
+        try {
           const path = asset.uri.replace('file://', '');
-          setImagePath(asset.uri); // keep uri for Image component
-
-          try {
-            const result = await QRKit.decodeQR(path);
-            console.log('QR Code Result:', result);
-            setResultLog((prev) => [
-              { type: 'decoded', data: result },
-              ...prev
-            ]);
-          } catch (error) {
-            setResultLog((prev) => [
-              { type: 'error', data: error?.message || error?.toString() },
-              ...prev
-            ]);
-          }
+          const res = await QRKit.decodeQR(path);
+          setResult(res);
+        } catch (e) {
+          setResult({ success: false, message: e.message || String(e) });
+        } finally {
+          setLoading(false);
         }
       }
-    );
+    });
+  };
+
+  const handleDecodeMultiple = async () => {
+    launchImageLibrary({ mediaType: 'photo', selectionLimit: 1 }, async (response) => {
+      if (response.didCancel) return;
+      if (response.errorCode) {
+        Alert.alert('Error', response.errorMessage || 'Image picker error');
+        return;
+      }
+      const asset = response.assets && response.assets[0];
+      if (asset && asset.uri) {
+        setImageUri(asset.uri);
+        setLoading(true);
+        try {
+          const path = asset.uri.replace('file://', '');
+          const res = await QRKit.decodeMultiple(path);
+          setResult(res);
+        } catch (e) {
+          setResult({ success: false, message: e.message || String(e) });
+        } finally {
+          setLoading(false);
+        }
+      }
+    });
+  };
+
+  const handleDecodeBase64 = async (base64) => {
+    setModal(null);
+    setLoading(true);
+    setImageUri(null);
+    try {
+      const res = await QRKit.decodeBase64(base64);
+      setResult(res);
+    } catch (e) {
+      setResult({ success: false, message: e.message || String(e) });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGenerateQR = async (text) => {
+    setModal(null);
+    setLoading(true);
+    setImageUri(null);
+    try {
+      const res = await QRKit.generateQRCode(text, 300);
+      setResult(res);
+      if (res.success && res.base64) {
+        setImageUri(`data:image/png;base64,${res.base64}`);
+      }
+    } catch (e) {
+      setResult({ success: false, message: e.message || String(e) });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>QR Code Decoder</Text>
-      <TouchableOpacity style={styles.button} onPress={pickImage} activeOpacity={0.8}>
-        <Text style={styles.buttonText}>Select QR Image</Text>
-      </TouchableOpacity>
-      {imagePath && (
+      <Text style={styles.title}>QRKit Test App</Text>
+      <View style={styles.buttonRow}>
+        <TouchableOpacity style={styles.button} onPress={handleDecodeQR}><Text style={styles.buttonText}>Decode QR</Text></TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={handleDecodeMultiple}><Text style={styles.buttonText}>Decode Multiple</Text></TouchableOpacity>
+      </View>
+      <View style={styles.buttonRow}>
+        <TouchableOpacity style={styles.button} onPress={() => setModal('base64')}><Text style={styles.buttonText}>Decode Base64</Text></TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={() => setModal('generate')}><Text style={styles.buttonText}>Generate QR</Text></TouchableOpacity>
+      </View>
+      <MethodModal
+        visible={modal === 'base64'}
+        onClose={() => setModal(null)}
+        onSubmit={handleDecodeBase64}
+        title="Decode QR from Base64"
+        inputLabel="Paste base64 image string:"
+        inputType="multiline"
+        placeholder="iVBORw0KGgoAAAANSUhEUgAA..."
+      />
+      <MethodModal
+        visible={modal === 'generate'}
+        onClose={() => setModal(null)}
+        onSubmit={handleGenerateQR}
+        title="Generate QR Code"
+        inputLabel="Enter text to encode:"
+        inputType="text"
+        placeholder="https://example.com"
+      />
+      {imageUri && (
         <View style={styles.imageContainer}>
-          <Image source={{ uri: imagePath }} style={styles.image} resizeMode="contain" />
-          <Text style={styles.pathText}>{imagePath}</Text>
+          <Image source={{ uri: imageUri }} style={styles.image} resizeMode="contain" />
+          {result && result.base64 && (
+            <TouchableOpacity style={styles.copyButton} onPress={handleCopyBase64} activeOpacity={0.8}>
+              <Text style={styles.copyButtonText}>Copy Base64</Text>
+            </TouchableOpacity>
+          )}
+          {copyMsg ? <Text style={styles.copyMsg}>{copyMsg}</Text> : null}
         </View>
       )}
-      <View style={styles.logContainer}>
-        <View style={styles.logHeader}>
-          <Text style={styles.logTitle}>Terminal Log</Text>
-          <TouchableOpacity style={styles.clearButton} onPress={clearLogs} activeOpacity={0.7}>
-            <Text style={styles.clearButtonText}>Clear</Text>
-          </TouchableOpacity>
-        </View>
-        <ScrollView style={styles.logScroll} contentContainerStyle={{ paddingBottom: 0 }}>
-          {resultLog.length === 0 ? (
-            <Text style={styles.logTextEmpty}>No logs yet.</Text>
-          ) : (
-            resultLog.map((log, idx) => {
-              if (log.type === 'decoded') {
-                let parsed = log.data;
-                let isSuccess = false;
-                let neonData = '';
-                try {
-                  if (typeof parsed === 'string') parsed = JSON.parse(parsed);
-                  isSuccess = parsed && parsed.success;
-                  neonData = parsed && parsed.data ? parsed.data : '';
-                } catch (e) {
-                  // fallback
-                }
-                return (
-                  <Text key={idx} style={styles.logText}>
-                    <Text style={styles.logPrefix}>{'> Decoded: '}</Text>
-                    {isSuccess && neonData ? (
-                      <Text style={styles.neonGreen}>{neonData + '\n'}</Text>
-                    ) : null}
-                    {JSON.stringify(log.data, null, 2)}
-                  </Text>
-                );
-              } else {
-                return (
-                  <Text key={idx} style={styles.logText}>
-                    <Text style={styles.logPrefix}>{'> Error: '}</Text>
-                    {log.data}
-                  </Text>
-                );
-              }
-            })
-          )}
- 
-        </ScrollView>
-      </View>
+      <ScrollView style={styles.resultBox} contentContainerStyle={{ padding: 12 }}>
+        {loading ? (
+          <Text style={styles.resultText}>Loading...</Text>
+        ) : result ? (
+          <Text selectable style={styles.resultText}>{JSON.stringify(result, null, 2)}</Text>
+        ) : (
+          <Text style={styles.resultText}>No result yet.</Text>
+        )}
+      </ScrollView>
     </View>
   );
 };
-
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#181A20',
-    padding: 0,
     alignItems: 'center',
     justifyContent: 'flex-start',
+    paddingTop: 48,
   },
   title: {
     fontSize: 26,
     fontWeight: 'bold',
     color: '#F5F6FA',
-    marginTop: 48,
     marginBottom: 24,
     letterSpacing: 1.2,
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginBottom: 12,
   },
   button: {
     backgroundColor: '#246BFD',
     paddingVertical: 14,
-    paddingHorizontal: 32,
+    paddingHorizontal: 18,
     borderRadius: 10,
-    marginBottom: 24,
+    marginHorizontal: 8,
+    marginBottom: 4,
     shadowColor: '#246BFD',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
@@ -140,7 +230,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#fff',
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '600',
     letterSpacing: 1,
   },
@@ -164,91 +254,112 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     backgroundColor: '#1A1B22',
   },
-  logHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: '#23242A',
+  copyButton: {
+    backgroundColor: '#246BFD',
     paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
+    paddingHorizontal: 18,
+    borderRadius: 8,
+    marginTop: 4,
+    alignSelf: 'center',
   },
-  clearButton: {
-    backgroundColor: '#23242A',
-    paddingVertical: 4,
-    paddingHorizontal: 12,
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: '#333',
-    marginLeft: 10,
+  copyButtonText: {
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: 15,
   },
-  clearButtonText: {
-    color: '#FF6B81',
+  copyMsg: {
+    color: '#7CFCAC',
     fontSize: 13,
-    fontWeight: 'bold',
-    letterSpacing: 0.5,
+    marginTop: 4,
+    alignSelf: 'center',
   },
-  pathText: {
-    color: '#8F93A2',
-    fontSize: 11,
-    textAlign: 'center',
-    marginTop: 2,
-    marginBottom: 2,
-  },
-  logContainer: {
+  resultBox: {
     flex: 1,
     width: '94%',
-    backgroundColor: '#181A20',
+    backgroundColor: '#23242A',
     borderRadius: 10,
     marginTop: 8,
     marginBottom: 12,
-    padding: 0,
     borderWidth: 1,
     borderColor: '#23242A',
     overflow: 'hidden',
   },
-   neonGreen: {
-    color: '#39FF14',
-    fontWeight: 'bold',
-    fontFamily: 'Menlo',
-    fontSize: 13,
-  },
-  logPrefix: {
-    color: '#7CFCAC',
-    fontFamily: 'Menlo',
-    fontSize: 13,
-  },
-  logTitle: {
-    color: '#7CFCAC',
-    fontSize: 15,
-    fontWeight: 'bold',
-    backgroundColor: '#23242A',
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
-    letterSpacing: 0.5,
-  },
-  logScroll: {
-    // maxHeight: 180,
-    paddingHorizontal: 12,
-    backgroundColor: '#181A20',
-  },
-  logText: {
+  resultText: {
     color: '#F5F6FA',
     fontFamily: 'Menlo',
-    fontSize: 13,
-    marginVertical: 2,
+    fontSize: 14,
     backgroundColor: 'transparent',
-  },
-  logTextEmpty: {
-    color: '#555',
-    fontSize: 13,
-    fontStyle: 'italic',
-    textAlign: 'center',
-    marginTop: 12,
   },
 });
 
-export default QRCodeDecode;
+
+const modalStyles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  modalBox: {
+    backgroundColor: '#23242A',
+    borderRadius: 12,
+    padding: 24,
+    width: 320,
+    alignItems: 'center',
+    maxHeight: '85%',
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#F5F6FA',
+    marginBottom: 12,
+  },
+  label: {
+    color: '#8F93A2',
+    fontSize: 14,
+    marginBottom: 6,
+    alignSelf: 'flex-start',
+  },
+  input: {
+    backgroundColor: '#181A20',
+    color: '#F5F6FA',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#333',
+    padding: 10,
+    width: '100%',
+    minHeight: 40,
+    marginBottom: 16,
+  },
+  inputMultiline: {
+    minHeight: 80,
+    maxHeight: 120,
+    textAlignVertical: 'top',
+  },
+  inputScroll: {
+    width: '100%',
+    maxHeight: 120,
+    marginBottom: 16,
+    borderRadius: 8,
+    backgroundColor: 'transparent',
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  button: {
+    backgroundColor: '#246BFD',
+    paddingVertical: 10,
+    paddingHorizontal: 18,
+    borderRadius: 8,
+    marginHorizontal: 4,
+  },
+  buttonText: {
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: 15,
+  },
+});
+
+export default App;
