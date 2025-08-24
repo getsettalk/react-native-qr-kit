@@ -1,4 +1,4 @@
-<img width="1536" height="1024" alt="ChatGPT Image Aug 24, 2025, 01_35_04 PM" src="https://github.com/user-attachments/assets/e503d854-af25-4789-a9b4-bcc2004fdd77" />
+<img width="1536" height="1024" alt="Banner image of QrKit" src="https://github.com/user-attachments/assets/eda50e46-be41-483b-b63e-e419b557182e" />
 
 # react-native-qr-kit
 
@@ -167,17 +167,21 @@ Generate a QR code as a base64 PNG image.
 
 
 <p align="center">
-<img width="200"  alt="image" src="https://github.com/user-attachments/assets/1bae5906-d1cc-4221-8c72-6ac1f5e48960" />
-<img width="200"  alt="image1" src="https://github.com/user-attachments/assets/9f45b537-c1de-464e-9c82-b563824d8df8" />
+<img width="200"  alt="image" src="https://github.com/user-attachments/assets/7f04bdf2-ef6b-4a9d-9397-3fdafedb835e" />
+<img width="200"  alt="image1" src="https://github.com/user-attachments/assets/6d980ef4-5c59-418f-99f4-b6b6b415c443" />
+
+
+
+
+
+
 </p>
 ---
 
 ## 🎬 Demo Video
 
-
-
 <p align="center">
-  <video src="https://github.com/user-attachments/assets/af9bae19-5950-4254-8a49-709a932ae705" width="250" controls></video>
+  <video src="https://github.com/user-attachments/assets/f9a0c97a-0100-453c-91e4-1ddf9a33daf6" width="250" controls></video>
 </p>
 
 ---
