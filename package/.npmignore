@@ -1,0 +1,8 @@
+example/
+node_modules/
+android/build/
+ios/build/
+ios/Pods/
+*.log
+*.iml
+*.idea/

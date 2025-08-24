@@ -1,0 +1,33 @@
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Build output
+android/build/
+android/.gradle/
+ios/build/
+ios/Pods/
+*.xcworkspace
+
+# IDE/editor
+*.iml
+*.idea/
+*.DS_Store
+
+# Output folders
+lib/
+dist/
+
+# Example app build output
+Example/android/build/
+Example/android/.gradle/
+Example/ios/build/
+Example/ios/Pods/
+
+# Misc
+coverage/
+test/
+tests/
+__tests__/
+*.log

@@ -1,0 +1,34 @@
+{
+    "name": "react-native-qr-kit",
+    "version": "1.0.1",
+    "description": "Fast, fully native QR code toolkit for React Native. Decode single or multiple QR codes from images or base64, and generate QR codes — all offline, on-device, with native Android performance. Perfect for local QR code scanning and generation in your React Native apps.",
+    "main": "src/index.js",
+    "private": false,
+    "scripts": {},
+    "keywords": [
+        "react-native",
+        "qr-code",
+        "decoder",
+        "scanner",
+        "react-native-qr",
+        "react-native-qr-code",
+        "react-native-qr-local-image",
+        "react-native-qr-decode",
+        "react-native-qr-kit"
+    ],
+    "bugs": {
+        "url": "https://github.com/getsettalk/react-native-qr-kit/issues"
+    },
+    "homepage": "https://github.com/getsettalk/react-native-qr-kit",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/getsettalk/react-native-qr-kit.git"
+    },
+    "author": "getsettalk",
+    "license": "MIT",
+    "peerDependencies": {
+        "react": ">=18.0.0",
+        "react-native": ">=0.72.0"
+    },
+    "devDependencies": {}
+}

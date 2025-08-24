@@ -1,0 +1,18 @@
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Build
+android/build/
+android/.gradle/
+ios/build/
+ios/Pods/
+*.xcworkspace
+*.iml
+*.idea/
+*.DS_Store
+
+# Misc
+lib/
+dist/
