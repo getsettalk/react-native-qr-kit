@@ -78,7 +78,8 @@ const App = () => {
         setImageUri(asset.uri);
         setLoading(true);
         try {
-          const path = asset.uri.replace('file://', '');
+          const path = asset.uri;
+          console.log(path)
           const res = await QRKit.decodeQR(path);
           setResult(res);
         } catch (e) {
@@ -102,7 +103,7 @@ const App = () => {
         setImageUri(asset.uri);
         setLoading(true);
         try {
-          const path = asset.uri.replace('file://', '');
+          const path = asset.uri;
           const res = await QRKit.decodeMultiple(path);
           setResult(res);
         } catch (e) {

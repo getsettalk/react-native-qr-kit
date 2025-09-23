@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "react-native-qr-kit"
-  s.version      = "1.0.0"
+  s.version      = "1.0.1"
   s.summary      = "React Native QR scanner"
   s.description  = "Cross-platform QR Code scanning/generation for React Native"
   s.homepage     = "https://github.com/yourusername/react-native-qr-kit"

@@ -15,7 +15,22 @@ import Vision
 class QRKitModule: NSObject {
     
     // MARK: - decodeBase64 (Matching Android)
+    /// Decodes a QR code from a base64-encoded image string.
+    /// - Parameters:
+    ///   - base64Str: The base64-encoded image string (e.g., "iVBORw0KGgo...").
+    ///   - resolver: The promise resolver to return the result.
+    ///   - rejecter: The promise rejecter to handle errors.
     @objc func decodeBase64(_ base64Str: String, resolver: @escaping RCTPromiseResolveBlock, rejecter: @escaping RCTPromiseRejectBlock) {
+        guard !base64Str.isEmpty else {
+            let errorMap: [String: Any] = [
+                "success": false,
+                "errorType": "ValidationError",
+                "message": "Base64 string cannot be empty"
+            ]
+            resolver(errorMap)
+            return
+        }
+
         do {
             guard let data = Data(base64Encoded: base64Str) else {
                 let errorMap: [String: Any] = [
@@ -26,7 +41,7 @@ class QRKitModule: NSObject {
                 resolver(errorMap)
                 return
             }
-            
+
             guard let image = UIImage(data: data),
                   let ciImage = CIImage(image: image) else {
                 let errorMap: [String: Any] = [
@@ -37,7 +52,7 @@ class QRKitModule: NSObject {
                 resolver(errorMap)
                 return
             }
-            
+
             // Perform detection (single QR assumption like Android)
             let detectionResult = detectBarcodes(in: ciImage)
             if let firstResult = detectionResult.first {
@@ -69,9 +84,12 @@ class QRKitModule: NSObject {
     }
     
     // MARK: - decodeQR (Matching Android - single decode)
+    /// Decodes a QR code from a local file path.
+    /// - Parameters:
+    ///   - path: The file path of the image containing the QR code.
+    ///   - resolver: The promise resolver to return the result.
+    ///   - rejecter: The promise rejecter to handle errors.
     @objc func decodeQR(_ path: String, resolver: @escaping RCTPromiseResolveBlock, rejecter: @escaping RCTPromiseRejectBlock) {
-        print("QRKit: decodeQR called with path: \(path)")
-        
         do {
             var cleanPath = path
             if cleanPath.hasPrefix("file://") {
@@ -99,8 +117,6 @@ class QRKitModule: NSObject {
                 return
             }
             
-            print("QRKit: Image loaded with size: \(image.size)")
-            
             // Perform detection
             let detectionResult = detectBarcodes(in: ciImage)
             if let firstResult = detectionResult.first,
@@ -118,7 +134,6 @@ class QRKitModule: NSObject {
                     "points": pointsArray // Fixed: Always return points array
                 ]
                 
-                print("QRKit: SUCCESS - Data: \(data.prefix(50))..., Format: \(format), Points: \(pointsArray.count)")
                 resolver(successMap)
             } else {
                 let errorMap: [String: Any] = [
@@ -141,6 +156,11 @@ class QRKitModule: NSObject {
     }
     
     // MARK: - decodeMultiple (Matching Android)
+    /// Decodes multiple QR codes from a local file path.
+    /// - Parameters:
+    ///   - path: The file path of the image containing multiple QR codes.
+    ///   - resolver: The promise resolver to return the result.
+    ///   - rejecter: The promise rejecter to handle errors.
     @objc func decodeMultiple(_ path: String, resolver: @escaping RCTPromiseResolveBlock, rejecter: @escaping RCTPromiseRejectBlock) {
         do {
             var cleanPath = path
@@ -192,6 +212,12 @@ class QRKitModule: NSObject {
     }
     
     // MARK: - generateQRCode (Matching Android)
+    /// Generates a QR code as a base64-encoded PNG image.
+    /// - Parameters:
+    ///   - data: The data to encode in the QR code.
+    ///   - size: The size of the generated QR code image.
+    ///   - resolver: The promise resolver to return the result.
+    ///   - rejecter: The promise rejecter to handle errors.
     @objc func generateQRCode(_ data: String, size: Int, resolver: @escaping RCTPromiseResolveBlock, rejecter: @escaping RCTPromiseRejectBlock) {
         guard let filter = CIFilter(name: "CIQRCodeGenerator") else {
             let errorMap: [String: Any] = [
@@ -278,15 +304,11 @@ class QRKitModule: NSObject {
         do {
             try requestHandler.perform([barcodeRequest])
             guard let observations = barcodeRequest.results as? [VNBarcodeObservation] else {
-                print("QRKit: No Vision observations found")
                 return []
             }
             
-            print("QRKit: Vision found \(observations.count) observations")
-            
             return observations.compactMap { observation -> [String: Any]? in
                 guard let payload = observation.payloadStringValue else {
-                    print("QRKit: Observation has no payload")
                     return nil
                 }
                 
@@ -321,8 +343,6 @@ class QRKitModule: NSObject {
                     "\(bottomLeft.x),\(bottomLeft.y)"  // Bottom Left
                 ]
                 
-                print("QRKit: Vision points calculated: \(points)")
-                
                 return [
                     "data": payload,
                     "format": format,
@@ -331,35 +351,27 @@ class QRKitModule: NSObject {
                 ]
             }
         } catch {
-            print("QRKit: Vision detection failed: \(error)")
             return []
         }
     }
     
     // MARK: - FIXED: CIDetector Detection with Proper Points
     private func detectWithCIDetector(in ciImage: CIImage) -> [[String: Any]] {
-        print("QRKit: Trying CIDetector fallback...")
-        
         guard let detector = CIDetector(
             ofType: CIDetectorTypeQRCode,
             context: nil,
             options: [CIDetectorAccuracy: CIDetectorAccuracyHigh]
         ) else {
-            print("QRKit: Failed to create CIDetector")
             return []
         }
         
         let features = detector.features(in: ciImage)
-        print("QRKit: CIDetector found \(features.count) features")
         
         return features.compactMap { feature -> [String: Any]? in
             guard let qrFeature = feature as? CIQRCodeFeature,
                   let payload = qrFeature.messageString else {
-                print("QRKit: Feature is not QR or has no payload")
                 return nil
             }
-            
-            print("QRKit: CIDetector found QR: \(payload.prefix(30))...")
             
             // FIXED: Calculate corner points from bounds to match Android
             let bounds = qrFeature.bounds
@@ -390,8 +402,6 @@ class QRKitModule: NSObject {
                 "\(bottomLeft.x),\(bottomLeft.y)"  // Bottom Left
             ]
             
-            print("QRKit: CIDetector points calculated: \(points)")
-            
             return [
                 "data": payload,
                 "format": "QR_CODE",
@@ -409,7 +419,6 @@ class QRKitModule: NSObject {
             grayscaleFilter.setValue(processedImage, forKey: kCIInputImageKey)
             if let output = grayscaleFilter.outputImage {
                 processedImage = output
-                print("QRKit: Applied grayscale enhancement")
             }
         }
         
@@ -418,7 +427,6 @@ class QRKitModule: NSObject {
             contrastFilter.setValue(2.0, forKey: kCIInputContrastKey)
             if let output = contrastFilter.outputImage {
                 processedImage = output
-                print("QRKit: Applied contrast enhancement")
             }
         }
         
