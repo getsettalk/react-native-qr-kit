@@ -48,7 +48,12 @@ class QRKitModule(reactContext: ReactApplicationContext) :
     fun decodeQR(path: String, promise: Promise) {
         Log.d("QRKit", "decodeQR called with path: $path")
         try {
-            val bitmap = BitmapFactory.decodeFile(path)
+            // Remove the "file://" prefix if it exists
+            var cleanPath = path
+            if (cleanPath.startsWith("file://")) {
+                cleanPath = cleanPath.substring(7)
+            }
+            val bitmap = BitmapFactory.decodeFile(cleanPath)
             if (bitmap == null) {
                 val errorMap = Arguments.createMap()
                 errorMap.putBoolean("success", false)
@@ -104,7 +109,13 @@ class QRKitModule(reactContext: ReactApplicationContext) :
     @ReactMethod
     fun decodeMultiple(path: String, promise: Promise) {
         try {
-            val bitmap = BitmapFactory.decodeFile(path)
+            // Remove the "file://" prefix if it exists
+            var cleanPath = path
+            if (cleanPath.startsWith("file://")) {
+                cleanPath = cleanPath.substring(7)
+            }
+
+            val bitmap = BitmapFactory.decodeFile(cleanPath)
             val pixels = IntArray(bitmap.width * bitmap.height)
             bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
 

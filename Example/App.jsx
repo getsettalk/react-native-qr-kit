@@ -55,6 +55,9 @@ const App = () => {
   const [imageUri, setImageUri] = useState(null);
   const [loading, setLoading] = useState(false);
   const [copyMsg, setCopyMsg] = useState('');
+
+  
+
   const handleCopyBase64 = () => {
     if (result && result.base64) {
       Clipboard.setString(result.base64);
@@ -179,7 +182,7 @@ const App = () => {
               <Text style={styles.copyButtonText}>Copy Base64</Text>
             </TouchableOpacity>
           )}
-          {copyMsg ? <Text style={styles.copyMsg}>{copyMsg}</Text> : null}
+          {copyMsg ? <Text selectable style={styles.copyMsg}>{copyMsg}</Text> : null}
         </View>
       )}
       <ScrollView style={styles.resultBox} contentContainerStyle={{ padding: 12 }}>

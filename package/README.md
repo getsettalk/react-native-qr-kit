@@ -52,6 +52,7 @@ protected List<ReactPackage> getPackages() {
 }
 ```
 
+# Uses 
 
 ```js
 import QRKit from 'react-native-qr-kit';
@@ -87,7 +88,7 @@ const result4 = await QRKit.generateQRCode('https://example.com', 300);
 Decode a QR code from a local image file path.
 
 **Returns:**
-```
+```js
 {
   success: true,
   data: string,         // QR code content
@@ -109,7 +110,7 @@ Decode a QR code from a local image file path.
 Decode a QR code from a base64-encoded image string.
 
 **Returns:**
-```
+```js
 {
   success: true,
   data: string
@@ -125,7 +126,7 @@ Decode a QR code from a base64-encoded image string.
 Decode multiple QR codes from a local image file path.
 
 **Returns:**
-```
+```js
 {
   success: true,
   results: [
@@ -144,7 +145,7 @@ Decode multiple QR codes from a local image file path.
 Generate a QR code as a base64 PNG image.
 
 **Returns:**
-```
+```js
 {
   success: true,
   base64: string // PNG image as base64

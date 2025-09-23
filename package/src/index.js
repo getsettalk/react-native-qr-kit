@@ -1,5 +1,11 @@
-import { NativeModules } from 'react-native';
-const { QRKit } = NativeModules;
+import { NativeModules, Platform } from 'react-native';
+
+// this module has developed by sujeet kumar @getsettalk
+
+const QRKit = Platform.select({
+  ios: NativeModules.QRKitModule, // iOS-specific module name
+  android: NativeModules.QRKit,  // Android-specific module name
+});
 
 const QRKitWrapper = {
   decodeBase64: (base64Str) => QRKit.decodeBase64(base64Str),

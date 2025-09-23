@@ -5380,10 +5380,10 @@ react-native-image-picker@^8.2.1:
   resolved "https://registry.yarnpkg.com/react-native-image-picker/-/react-native-image-picker-8.2.1.tgz#1ac7826563cbaa5d5298d9f2acc53c69805e5393"
   integrity sha512-FBeGYJGFDjMdGCcyubDJgBAPCQ4L1D3hwLXyUU91jY9ahOZMTbluceVvRmrEKqnDPFJ0gF1NVhJ0nr1nROFLdg==
 
-react-native-qr-kit@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/react-native-qr-kit/-/react-native-qr-kit-1.0.0.tgz#4e14b703768cb3b69e9e309ee93b41fa13c743a9"
-  integrity sha512-na9lO3xLrLyBGpLoMkmRMUyIPrdkOj4RMWUoxsdcaL/SwR9qDwfTPM9NLWqvLAhTNFFxvnP+8vkzlE7e+OUroA==
+react-native-qr-kit@1.1.0-beta.0:
+  version "1.1.0-beta.0"
+  resolved "https://registry.yarnpkg.com/react-native-qr-kit/-/react-native-qr-kit-1.1.0-beta.0.tgz#2ec37b6c842060c660581abca12731ac27b84770"
+  integrity sha512-FC94rUjSfidT4qe8I8FDTT5/x71C7wxJDuSOHEfAT7Xd96QThMRoTRDK96jDjoKI0PtBE6Q9rncD5yXB2IewYg==
 
 react-native-safe-area-context@^5.5.2:
   version "5.6.1"
