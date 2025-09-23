@@ -1,4 +1,4 @@
-<img width="1536" height="1024" alt="Banner image of QrKit" src="https://github.com/user-attachments/assets/eda50e46-be41-483b-b63e-e419b557182e" />
+<img width="1248" height="832" alt="Banner Image" src="https://github.com/user-attachments/assets/b640186f-1de1-4696-a8c6-51c1ed062595" />
 
 # react-native-qr-kit
 
