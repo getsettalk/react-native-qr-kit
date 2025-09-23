@@ -313,7 +313,11 @@ Generate a QR code as a base64 PNG image.
 <img width="200"  alt="image" src="https://github.com/user-attachments/assets/7f04bdf2-ef6b-4a9d-9397-3fdafedb835e" />
 <img width="200"  alt="image1" src="https://github.com/user-attachments/assets/6d980ef4-5c59-418f-99f4-b6b6b415c443" />
 <video src="https://github.com/user-attachments/assets/f9a0c97a-0100-453c-91e4-1ddf9a33daf6" width="200" controls></video>
+<video src="https://github.com/user-attachments/assets/658e42f4-8246-4ffa-9255-7f3436a5c177" width="200" controls></video>
 </p>
+
+
+
 
 
 
