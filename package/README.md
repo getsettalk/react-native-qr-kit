@@ -20,9 +20,18 @@
 - **Generate QR Code**: Create QR codes as base64 PNG images.
 - **Native Performance**: Built with native Android and iOS code for speed and reliability.
 - **Easy Integration**: Simple API for React Native apps.
+- **Full TypeScript Support**: Complete type definitions for all methods and responses.
 
 > **Note:**  
 > While the library is fully focused on QR codes, decoding other barcode formats may not work reliably on iOS. See [#screenshot](#Screenshots) below for an example.
+
+---
+
+## 📚 Documentation
+
+- **[Main README](./README.md)** - Overview and basic usage
+- **[TypeScript Guide](./TYPESCRIPT_GUIDE.md)** - Complete TypeScript types and examples (⭐ **Start here if using TypeScript**)
+- **[GitHub Repository](https://github.com/getsettalk/react-native-qr-kit)**
 
 ---
 
@@ -307,14 +316,9 @@ Generate a QR code as a base64 PNG image.
 
 ## Screenshots
 
-
-
-<p align="center">
-<img width="200"  alt="image" src="https://github.com/user-attachments/assets/7f04bdf2-ef6b-4a9d-9397-3fdafedb835e" />
-<img width="200"  alt="image1" src="https://github.com/user-attachments/assets/6d980ef4-5c59-418f-99f4-b6b6b415c443" />
-<video src="https://github.com/user-attachments/assets/f9a0c97a-0100-453c-91e4-1ddf9a33daf6" width="200" controls></video>
-<video src="https://github.com/user-attachments/assets/658e42f4-8246-4ffa-9255-7f3436a5c177" width="200" controls></video>
-</p>
+| Screenshot | Screenshot | Android Video | IOS Video |
+|-----------|-----------|-----------|-----------|
+| <img width="200" alt="Screenshot 1" src="https://github.com/user-attachments/assets/7f04bdf2-ef6b-4a9d-9397-3fdafedb835e" /> | <img width="200" alt="Screenshot 2" src="https://github.com/user-attachments/assets/6d980ef4-5c59-418f-99f4-b6b6b415c443" /> | <video width="200" controls src="https://github.com/user-attachments/assets/f9a0c97a-0100-453c-91e4-1ddf9a33daf6"></video> | <video width="200" controls src="https://github.com/user-attachments/assets/658e42f4-8246-4ffa-9255-7f3436a5c177"></video> |
 
 
 

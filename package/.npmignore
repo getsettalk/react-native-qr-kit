@@ -3,6 +3,9 @@ node_modules/
 android/build/
 ios/build/
 ios/Pods/
+dist/
 *.log
 *.iml
 *.idea/
+.git/
+.gitignore

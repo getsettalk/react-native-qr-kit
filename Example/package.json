@@ -15,8 +15,8 @@
     "react": "19.1.0",
     "react-native": "0.81.0",
     "react-native-image-picker": "^8.2.1",
-    "react-native-qr-kit": "../package",
-    "react-native-safe-area-context": "^5.5.2"
+    "react-native-safe-area-context": "^5.5.2",
+    "react-native-qr-kit": "../package"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
