@@ -30,7 +30,7 @@
 ## 📚 Documentation
 
 - **[Main README](./README.md)** - Overview and basic usage
-- **[TypeScript Guide](./TYPESCRIPT_GUIDE.md)** - Complete TypeScript types and examples (⭐ **Start here if using TypeScript**)
+- **[TypeScript Guide](./package/TYPESCRIPT_GUIDE.md)** - Complete TypeScript types and examples (⭐ **Start here if using TypeScript**)
 - **[GitHub Repository](https://github.com/getsettalk/react-native-qr-kit)**
 
 ---
